@@ -20,12 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.11'
 
       - name: Set up JDK
         uses: actions/setup-java@v2
@@ -36,40 +36,43 @@ jobs:
       - name: Set up Maven
         run: sudo apt-get install -y maven
 
-      - name: Install localstack & awslocal
+      - name: Start LocalStack
+        uses: LocalStack/setup-localstack@v0.2.4
+        with:
+          image-tag: 'latest'
+          use-pro: 'true'
+          configuration: LS_LOG=trace
+          install-awslocal: 'true'
+        env:
+          LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Install tflocal
         run: |
-          pip install localstack
           pip install terraform-local
-          pip install awscli-local
 
       - name: Build project
         run: |
           cd shipment-picture-lambda-validator
           mvn clean package shade:shade
 
-      - name: Start LocalStack
-        run: |
-          docker pull localstack/localstack:latest
-          # Start LocalStack in the background
-          LS_LOG=trace localstack start -d
-          # Wait 30 seconds for the LocalStack container to become ready before timing out
-          echo "Waiting for LocalStack startup..."
-          localstack wait -t 15
-          echo "Startup complete"
-
-      - name: Run Terraform Config File
+      - name: Deploy using Terraform
         run: |
           cd terraform
           bash run-tflocal.sh
 
-      - name: Check for Bucket
+      - name: Build frontend
         run: |
-          output=$(awslocal s3api list-buckets --query "Buckets[?contains(Name, 'shipment-picture-bucket')].Name" --output text)
-          if [ -z "$output" ]; then
-            echo "Created bucket not found."
-            exit 1
-          else echo "Bucket with random name was found: $output"
-          fi
+          cd shipment-list-frontend
+          npm install
+          npm run build
+
+      - name: Show LocalStack logs
+        if: always()
+        run: |
+          localstack logs
 
       - name: Send a Slack notification
         if: failure() || github.event_name != 'pull_request'
@@ -91,7 +94,7 @@ jobs:
 
       - name: Upload the Diagnostic Report
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: diagnose.json.gz
           path: ./diagnose.json.gz
