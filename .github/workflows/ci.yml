@@ -76,6 +76,10 @@ jobs:
           npm install
           CI=false npm run build
 
+      - name: Run Testcontainers tests
+        run: |
+          mvn test -Dtest=dev.ancaghenade.shipmentlistdemo.integrationtests.ShipmentServiceIntegrationTest      
+
       - name: Show LocalStack logs
         if: always()
         run: |
