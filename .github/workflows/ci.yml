@@ -1,4 +1,4 @@
-name: Create Infra on LocalStack
+name: Deploy with Terraform & run tests
 
 on:
   push:
@@ -15,8 +15,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  infrastructure-check:
-    name: Setup infrastructure using Terraform
+  test:
+    name: Run Integration Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
