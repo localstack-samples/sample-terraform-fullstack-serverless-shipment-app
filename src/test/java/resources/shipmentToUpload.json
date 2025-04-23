@@ -1,0 +1,25 @@
+{
+    "shipmentId": "a7ba93a2-bc88-463f-a27e-3dbcc8ef436e",
+    "recipient": {
+      "name": "Home Sweet Home",
+      "address": {
+        "postalCode": "98653",
+        "street": "47th Street",
+        "number": "4",
+        "city": "Springfield",
+        "additionalInfo": null
+      }
+    },
+    "sender": {
+      "name": "Warehouse of Unicorns",
+      "address": {
+        "postalCode": "98653",
+        "street": "47th Street",
+        "number": "4",
+        "city": "Townsville",
+        "additionalInfo": null
+      }
+    },
+    "weight": 2.3,
+    "imageLink": null
+  }

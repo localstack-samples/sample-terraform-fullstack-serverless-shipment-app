@@ -1,0 +1,25 @@
+{
+    "shipmentId": "3317ac4f-1f9b-4bab-a974-4aa9876d5547",
+    "recipient": {
+      "name": "Harry Potter",
+      "address": {
+        "postalCode": "LNDNGB",
+        "street": "Privet Drive",
+        "number": "4",
+        "city": "Little Whinging",
+        "additionalInfo": ""
+      }
+    },
+    "sender": {
+      "name": "Warehouse of Unicorns",
+      "address": {
+        "postalCode": "98653",
+        "street": "47th Street",
+        "number": "5",
+        "city": "Townsville",
+        "additionalInfo": ""
+      }
+    },
+    "weight": 2.3,
+    "imageLink": null
+  }
