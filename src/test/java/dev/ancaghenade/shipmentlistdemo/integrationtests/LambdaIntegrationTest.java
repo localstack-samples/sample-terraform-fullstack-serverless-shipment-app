@@ -30,7 +30,6 @@ import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LambdaIntegrationTest extends LocalStackSetupConfigurations {
 
@@ -86,13 +85,13 @@ public class LambdaIntegrationTest extends LocalStackSetupConfigurations {
     var headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     // request body with the file resource and headers
-    MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
+    MultiValueMap < String, Object > requestBody = new LinkedMultiValueMap < > ();
     requestBody.add("file", resource);
-    HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody,
-        headers);
+    HttpEntity < MultiValueMap < String, Object >> requestEntity = new HttpEntity < > (requestBody,
+      headers);
 
-    ResponseEntity<String> postResponse = restTemplate.exchange(BASE_URL + postUrl,
-        HttpMethod.POST, requestEntity, String.class);
+    ResponseEntity < String > postResponse = restTemplate.exchange(BASE_URL + postUrl,
+      HttpMethod.POST, requestEntity, String.class);
 
     assertEquals(HttpStatus.OK, postResponse.getStatusCode());
 
@@ -104,8 +103,8 @@ public class LambdaIntegrationTest extends LocalStackSetupConfigurations {
       e.printStackTrace();
     }
 
-    ResponseEntity<byte[]> responseEntity = restTemplate.exchange(BASE_URL + getUrl,
-        HttpMethod.GET, null, byte[].class);
+    ResponseEntity < byte[] > responseEntity = restTemplate.exchange(BASE_URL + getUrl,
+      HttpMethod.GET, null, byte[].class);
 
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
@@ -119,29 +118,28 @@ public class LambdaIntegrationTest extends LocalStackSetupConfigurations {
   @Order(2)
   void testFileProcessedInLambdaHasMetadata() {
     var getItemRequest = GetItemRequest.builder()
-        .tableName("shipment")
-        .key(Map.of(
-            "shipmentId",
-            AttributeValue.builder().s("3317ac4f-1f9b-4bab-a974-4aa9876d5547").build())).build();
+      .tableName("shipment")
+      .key(Map.of(
+        "shipmentId",
+        AttributeValue.builder().s("3317ac4f-1f9b-4bab-a974-4aa9876d5547").build())).build();
 
     var getItemResponse = dynamoDbClient.getItem(getItemRequest);
 
     dynamoDbClient.getItem(getItemRequest);
     GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-        .bucket(BUCKET_NAME)
-        .key(getItemResponse.item().get("imageLink").s())
-        .build();
+      .bucket(BUCKET_NAME)
+      .key(getItemResponse.item().get("imageLink").s())
+      .build();
     try {
       // already processed objects have a metadata field added, not be processed again
       var s3ObjectResponse = s3Client.getObject(getObjectRequest);
       assertTrue(s3ObjectResponse.response().metadata().entrySet().stream().anyMatch(
-          entry -> entry.getKey().equals("exclude-lambda") && entry.getValue().equals("true")));
+        entry -> entry.getKey().equals("exclude-lambda") && entry.getValue().equals("true")));
     } catch (NoSuchKeyException noSuchKeyException) {
       noSuchKeyException.printStackTrace();
     }
     dynamoDbClient.close();
     s3Client.close();
-
 
   }
 
@@ -155,7 +153,7 @@ public class LambdaIntegrationTest extends LocalStackSetupConfigurations {
 
       // convert the hash bytes to a hexadecimal representation
       var hexString = new StringBuilder();
-      for (byte b : hash) {
+      for (byte b: hash) {
         var hex = Integer.toHexString(0xff & b);
         if (hex.length() == 1) {
           hexString.append('0');

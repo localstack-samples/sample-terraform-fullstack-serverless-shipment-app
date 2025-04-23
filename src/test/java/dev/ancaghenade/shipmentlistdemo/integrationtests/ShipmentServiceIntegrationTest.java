@@ -41,13 +41,13 @@ class ShipmentServiceIntegrationTest extends LocalStackSetupConfigurations {
     localStack.followOutput(logConsumer);
 
     s3Client = S3Client.builder()
-        .region(region)
-        .endpointOverride(localStack.getEndpointOverride(LocalStackContainer.Service.S3))
-        .build();
+      .region(region)
+      .endpointOverride(localStack.getEndpointOverride(LocalStackContainer.Service.S3))
+      .build();
     dynamoDbClient = DynamoDbClient.builder()
-        .region(region)
-        .endpointOverride(localStack.getEndpointOverride(Service.DYNAMODB))
-        .build();
+      .region(region)
+      .endpointOverride(localStack.getEndpointOverride(Service.DYNAMODB))
+      .build();
 
     createS3Bucket();
     createDynamoDBResources();
@@ -77,17 +77,17 @@ class ShipmentServiceIntegrationTest extends LocalStackSetupConfigurations {
     var headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     // request body with the file resource and headers
-    MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
+    MultiValueMap < String, Object > requestBody = new LinkedMultiValueMap < > ();
     requestBody.add("file", resource);
-    HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody,
-        headers);
+    HttpEntity < MultiValueMap < String, Object >> requestEntity = new HttpEntity < > (requestBody,
+      headers);
 
-    ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_URL + url,
-        HttpMethod.POST, requestEntity, String.class);
+    ResponseEntity < String > responseEntity = restTemplate.exchange(BASE_URL + url,
+      HttpMethod.POST, requestEntity, String.class);
 
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     var execResult = executeInContainer(
-        "awslocal s3api list-objects --bucket shipment-picture-bucket --query length(Contents[])");
+      "awslocal s3api list-objects --bucket shipment-picture-bucket --query length(Contents[])");
     assertEquals(String.valueOf(1), execResult.getStdout().trim());
   }
 
@@ -99,8 +99,8 @@ class ShipmentServiceIntegrationTest extends LocalStackSetupConfigurations {
     // build the URL with the id as a path variable
     var url = "/api/shipment/" + shipmentId + "/image/download";
 
-    ResponseEntity<byte[]> responseEntity = restTemplate.exchange(BASE_URL + url,
-        HttpMethod.GET, null, byte[].class);
+    ResponseEntity < byte[] > responseEntity = restTemplate.exchange(BASE_URL + url,
+      HttpMethod.GET, null, byte[].class);
 
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     // object is not empty
@@ -120,11 +120,11 @@ class ShipmentServiceIntegrationTest extends LocalStackSetupConfigurations {
     var headers = new HttpHeaders();
     headers.setContentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE));
 
-    HttpEntity<Shipment> requestEntity = new HttpEntity<>(shipment,
-        headers);
+    HttpEntity < Shipment > requestEntity = new HttpEntity < > (shipment,
+      headers);
 
-    ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_URL + url,
-        HttpMethod.POST, requestEntity, String.class);
+    ResponseEntity < String > responseEntity = restTemplate.exchange(BASE_URL + url,
+      HttpMethod.POST, requestEntity, String.class);
 
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
@@ -136,12 +136,11 @@ class ShipmentServiceIntegrationTest extends LocalStackSetupConfigurations {
 
     var url = "/api/shipment";
     // set the request headers
-    ResponseEntity<List<Shipment>> responseEntity = restTemplate.exchange(BASE_URL + url,
-        HttpMethod.GET, null, new ParameterizedTypeReference<>() {
-        });
+    ResponseEntity < List < Shipment >> responseEntity = restTemplate.exchange(BASE_URL + url,
+      HttpMethod.GET, null, new ParameterizedTypeReference < > () {});
 
     if (responseEntity.getStatusCode().is2xxSuccessful()) {
-      List<Shipment> shipmentList = responseEntity.getBody();
+      List < Shipment > shipmentList = responseEntity.getBody();
       assertEquals(2, shipmentList.size());
     }
   }
@@ -154,18 +153,17 @@ class ShipmentServiceIntegrationTest extends LocalStackSetupConfigurations {
     var shipmentId = "/3317ac4f-1f9b-4bab-a974-4aa9876d5547";
 
     // set the request headers
-    ResponseEntity<String> deleteResponseEntity = restTemplate.exchange(BASE_URL + url + shipmentId,
-        HttpMethod.DELETE, null, String.class);
+    ResponseEntity < String > deleteResponseEntity = restTemplate.exchange(BASE_URL + url + shipmentId,
+      HttpMethod.DELETE, null, String.class);
 
     assertEquals(HttpStatus.OK, deleteResponseEntity.getStatusCode());
     assertEquals("Shipment has been deleted", deleteResponseEntity.getBody());
 
-    ResponseEntity<List<Shipment>> getResponseEntity = restTemplate.exchange(BASE_URL + url,
-        HttpMethod.GET, null, new ParameterizedTypeReference<>() {
-        });
+    ResponseEntity < List < Shipment >> getResponseEntity = restTemplate.exchange(BASE_URL + url,
+      HttpMethod.GET, null, new ParameterizedTypeReference < > () {});
 
     if (getResponseEntity.getStatusCode().is2xxSuccessful()) {
-      List<Shipment> shipmentList = getResponseEntity.getBody();
+      List < Shipment > shipmentList = getResponseEntity.getBody();
       assertEquals(1, shipmentList.size());
     }
   }

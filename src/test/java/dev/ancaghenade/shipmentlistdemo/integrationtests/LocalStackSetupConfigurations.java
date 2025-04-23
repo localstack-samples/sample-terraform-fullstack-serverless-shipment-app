@@ -68,10 +68,10 @@ public class LocalStackSetupConfigurations {
 
   @Container
   protected static LocalStackContainer localStack =
-      new LocalStackContainer(DockerImageName.parse("localstack/localstack:latest"))
-              .withEnv("LOCALSTACK_HOST", "localhost.localstack.cloud")
-              .withEnv("LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT", "60")
-              .withEnv("DEBUG", "1");
+    new LocalStackContainer(DockerImageName.parse("localstack/localstack:latest"))
+    .withEnv("LOCALSTACK_HOST", "localhost.localstack.cloud")
+    .withEnv("LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT", "60")
+    .withEnv("DEBUG", "1");
 
   private static final Logger LOGGER = LoggerFactory.getLogger(LocalStackSetupConfigurations.class);
   protected static Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(LOGGER);
@@ -98,13 +98,13 @@ public class LocalStackSetupConfigurations {
   @DynamicPropertySource
   static void overrideConfigs(DynamicPropertyRegistry registry) {
     registry.add("aws.s3.endpoint",
-        () -> localStackEndpoint);
+      () -> localStackEndpoint);
     registry.add(
-        "aws.dynamodb.endpoint", () -> localStackEndpoint);
+      "aws.dynamodb.endpoint", () -> localStackEndpoint);
     registry.add(
-        "aws.sqs.endpoint", () -> localStackEndpoint);
+      "aws.sqs.endpoint", () -> localStackEndpoint);
     registry.add(
-        "aws.sns.endpoint", () -> localStackEndpoint);
+      "aws.sns.endpoint", () -> localStackEndpoint);
     registry.add("aws.credentials.secret-key", localStack::getSecretKey);
     registry.add("aws.credentials.access-key", localStack::getAccessKey);
     registry.add("aws.region", localStack::getRegion);
@@ -113,41 +113,41 @@ public class LocalStackSetupConfigurations {
 
   protected static void createClients() {
     s3Client = S3Client.builder()
-        .region(region)
-        .endpointOverride(localStack.getEndpointOverride(LocalStackContainer.Service.S3))
-        .credentialsProvider(StaticCredentialsProvider.create(
-            AwsBasicCredentials.create(localStack.getAccessKey(), localStack.getSecretKey())))
-        .build();
+      .region(region)
+      .endpointOverride(localStack.getEndpointOverride(LocalStackContainer.Service.S3))
+      .credentialsProvider(StaticCredentialsProvider.create(
+        AwsBasicCredentials.create(localStack.getAccessKey(), localStack.getSecretKey())))
+      .build();
     dynamoDbClient = DynamoDbClient.builder()
-        .region(region)
-        .endpointOverride(localStack.getEndpointOverride(Service.DYNAMODB))
-        .credentialsProvider(StaticCredentialsProvider.create(
-            AwsBasicCredentials.create(localStack.getAccessKey(), localStack.getSecretKey())))
-        .build();
+      .region(region)
+      .endpointOverride(localStack.getEndpointOverride(Service.DYNAMODB))
+      .credentialsProvider(StaticCredentialsProvider.create(
+        AwsBasicCredentials.create(localStack.getAccessKey(), localStack.getSecretKey())))
+      .build();
     lambdaClient = LambdaClient.builder()
-        .region(region)
-        .endpointOverride(localStack.getEndpointOverride(Service.LAMBDA))
-        .credentialsProvider(StaticCredentialsProvider.create(
-            AwsBasicCredentials.create(localStack.getAccessKey(), localStack.getSecretKey())))
-        .build();
+      .region(region)
+      .endpointOverride(localStack.getEndpointOverride(Service.LAMBDA))
+      .credentialsProvider(StaticCredentialsProvider.create(
+        AwsBasicCredentials.create(localStack.getAccessKey(), localStack.getSecretKey())))
+      .build();
     sqsClient = SqsClient.builder()
-        .region(region)
-        .endpointOverride(localStack.getEndpointOverride(Service.SQS))
-        .credentialsProvider(StaticCredentialsProvider.create(
-            AwsBasicCredentials.create(localStack.getAccessKey(), localStack.getSecretKey())))
-        .build();
+      .region(region)
+      .endpointOverride(localStack.getEndpointOverride(Service.SQS))
+      .credentialsProvider(StaticCredentialsProvider.create(
+        AwsBasicCredentials.create(localStack.getAccessKey(), localStack.getSecretKey())))
+      .build();
     snsClient = SnsClient.builder()
-        .region(region)
-        .endpointOverride(localStack.getEndpointOverride(Service.SNS))
-        .credentialsProvider(StaticCredentialsProvider.create(
-            AwsBasicCredentials.create(localStack.getAccessKey(), localStack.getSecretKey())))
-        .build();
+      .region(region)
+      .endpointOverride(localStack.getEndpointOverride(Service.SNS))
+      .credentialsProvider(StaticCredentialsProvider.create(
+        AwsBasicCredentials.create(localStack.getAccessKey(), localStack.getSecretKey())))
+      .build();
     iamClient = IamClient.builder()
-        .region(Region.AWS_GLOBAL)
-        .endpointOverride(localStack.getEndpointOverride(Service.IAM))
-        .credentialsProvider(StaticCredentialsProvider.create(
-            AwsBasicCredentials.create(localStack.getAccessKey(), localStack.getSecretKey())))
-        .build();
+      .region(Region.AWS_GLOBAL)
+      .endpointOverride(localStack.getEndpointOverride(Service.IAM))
+      .credentialsProvider(StaticCredentialsProvider.create(
+        AwsBasicCredentials.create(localStack.getAccessKey(), localStack.getSecretKey())))
+      .build();
   }
 
   protected static void createIAMRole() {
@@ -157,18 +157,18 @@ public class LocalStackSetupConfigurations {
 
     // call createRole API with request using name and policy
     iamClient.createRole(CreateRoleRequest.builder()
-        .roleName(roleName)
-        .assumeRolePolicyDocument(assumeRolePolicyDocument)
-        .build());
+      .roleName(roleName)
+      .assumeRolePolicyDocument(assumeRolePolicyDocument)
+      .build());
 
     var policyArn = "arn:aws:iam::aws:policy/AmazonS3FullAccess";
 
     // attach s3 full access policy to role
     iamClient.attachRolePolicy(
-        AttachRolePolicyRequest.builder()
-            .roleName(roleName)
-            .policyArn(policyArn)
-            .build());
+      AttachRolePolicyRequest.builder()
+      .roleName(roleName)
+      .policyArn(policyArn)
+      .build());
 
   }
 
@@ -183,9 +183,9 @@ public class LocalStackSetupConfigurations {
 
     // create get queue attributes request
     var request = GetQueueAttributesRequest.builder()
-        .queueUrl(getQueueUrl(sqsClient, queueName))
-        .attributeNames(QueueAttributeName.QUEUE_ARN)
-        .build();
+      .queueUrl(getQueueUrl(sqsClient, queueName))
+      .attributeNames(QueueAttributeName.QUEUE_ARN)
+      .build();
 
     // call API with the request and get the attributes
     var response = sqsClient.getQueueAttributes(request);
@@ -194,10 +194,10 @@ public class LocalStackSetupConfigurations {
 
     // create the queue subscribe to topic request
     var subscribeRequest = SubscribeRequest.builder()
-        .topicArn(topicArn)
-        .protocol("sqs")
-        .endpoint(queueArn)
-        .build();
+      .topicArn(topicArn)
+      .protocol("sqs")
+      .endpoint(queueArn)
+      .build();
 
     // call subscribe API with request
     snsClient.subscribe(subscribeRequest);
@@ -209,8 +209,8 @@ public class LocalStackSetupConfigurations {
 
     // request to create queue
     var request = CreateQueueRequest.builder()
-        .queueName(queueName)
-        .build();
+      .queueName(queueName)
+      .build();
 
     // call createQueue API with the request
     sqsClient.createQueue(request);
@@ -222,44 +222,44 @@ public class LocalStackSetupConfigurations {
 
     // create topic request
     var request = CreateTopicRequest.builder()
-        .name(topicName)
-        .build();
+      .name(topicName)
+      .build();
 
     // call createTopic API with request
     snsClient.createTopic(request);
   }
 
   protected static void createBucketNotificationConfiguration()
-      throws IOException, InterruptedException, org.json.JSONException {
+  throws IOException, InterruptedException, org.json.JSONException {
 
     try {
       // lambda needs to be in state "Active" in order to proceed with adding permissions
       // this can take 2-3 seconds to reach
       var result = localStack.execInContainer(formatCommand(
-          "awslocal lambda get-function --function-name shipment-picture-lambda-validator"));
+        "awslocal lambda get-function --function-name shipment-picture-lambda-validator"));
       var obj = new JSONObject(result.getStdout()).getJSONObject("Configuration");
       var state = obj.getString("State");
       while (!state.equals("Active")) {
         result = localStack.execInContainer(formatCommand(
-            "awslocal lambda get-function --function-name shipment-picture-lambda-validator"));
+          "awslocal lambda get-function --function-name shipment-picture-lambda-validator"));
         obj = new JSONObject(result.getStdout()).getJSONObject("Configuration");
         state = obj.getString("State");
       }
 
       // create notification configuration
       var notificationConfiguration = NotificationConfiguration.builder()
-          .lambdaFunctionConfigurations(
-              LambdaFunctionConfiguration.builder().id("shipment-picture-lambda-validator")
-                  .lambdaFunctionArn(
-                      "arn:aws:lambda:" + region
-                          + ":000000000000:function:shipment-picture-lambda-validator")
-                  .events(Event.S3_OBJECT_CREATED).build()).build();
+        .lambdaFunctionConfigurations(
+          LambdaFunctionConfiguration.builder().id("shipment-picture-lambda-validator")
+          .lambdaFunctionArn(
+            "arn:aws:lambda:" + region +
+            ":000000000000:function:shipment-picture-lambda-validator")
+          .events(Event.S3_OBJECT_CREATED).build()).build();
 
       // create the request for trigger
       var request = PutBucketNotificationConfigurationRequest.builder()
-          .bucket(BUCKET_NAME)
-          .notificationConfiguration(notificationConfiguration)
-          .build();
+        .bucket(BUCKET_NAME)
+        .notificationConfiguration(notificationConfiguration)
+        .build();
 
       // call the PutBucketNotificationConfiguration API with the request
       s3Client.putBucketNotificationConfiguration(request);
@@ -280,8 +280,8 @@ public class LocalStackSetupConfigurations {
     var principal = "s3.amazonaws.com";
 
     var getRoleResponse = iamClient.getRole(GetRoleRequest.builder()
-        .roleName("lambda_exec_role")
-        .build());
+      .roleName("lambda_exec_role")
+      .build());
 
     var roleArn = getRoleResponse.role().arn();
 
@@ -290,30 +290,30 @@ public class LocalStackSetupConfigurations {
       var zipFileBuffer = ByteBuffer.wrap(zipFileBytes);
 
       var createFunctionRequest = CreateFunctionRequest.builder()
-          .functionName(functionName)
-          .runtime(runtime)
-          .handler(handler)
-          .code(FunctionCode.builder().zipFile(SdkBytes.fromByteBuffer(zipFileBuffer)).build())
-          .role(roleArn)
-          .timeout(60)
-          .memorySize(512)
-          // bucket name that is being passed as env var because it's randomly generated
-          .environment(
-              Environment.builder().variables(Collections.singletonMap("BUCKET", BUCKET_NAME))
-                  .build())
-          .build();
+        .functionName(functionName)
+        .runtime(runtime)
+        .handler(handler)
+        .code(FunctionCode.builder().zipFile(SdkBytes.fromByteBuffer(zipFileBuffer)).build())
+        .role(roleArn)
+        .timeout(60)
+        .memorySize(512)
+        // bucket name that is being passed as env var because it's randomly generated
+        .environment(
+          Environment.builder().variables(Collections.singletonMap("BUCKET", BUCKET_NAME))
+          .build())
+        .build();
 
       lambdaClient.createFunction(
-          createFunctionRequest);
+        createFunctionRequest);
 
       var request = AddPermissionRequest.builder()
-          .functionName(functionName)
-          .statementId(statementId)
-          .action(action)
-          .principal(principal)
-          .sourceArn(sourceArn)
-          .sourceAccount("000000000000")
-          .build();
+        .functionName(functionName)
+        .statementId(statementId)
+        .action(action)
+        .principal(principal)
+        .sourceArn(sourceArn)
+        .sourceAccount("000000000000")
+        .build();
 
       // call the addPermission API with the request
       lambdaClient.addPermission(request);
@@ -330,74 +330,75 @@ public class LocalStackSetupConfigurations {
 
     // attribute definitions
     var attributeDefinition = AttributeDefinition.builder()
-        .attributeName("shipmentId")
-        .attributeType(ScalarAttributeType.S)
-        .build();
+      .attributeName("shipmentId")
+      .attributeType(ScalarAttributeType.S)
+      .build();
 
     // create key schema
     var keySchemaElement = KeySchemaElement.builder()
-        .attributeName("shipmentId")
-        .keyType(KeyType.HASH)
-        .build();
+      .attributeName("shipmentId")
+      .keyType(KeyType.HASH)
+      .build();
 
     // CreateTableRequest with table name, attribute definitions, key schema, and billing mode
     var createTableRequest = CreateTableRequest.builder()
-        .tableName(tableName)
-        .attributeDefinitions(attributeDefinition)
-        .keySchema(keySchemaElement)
-        .billingMode(BillingMode.PAY_PER_REQUEST)
-        .build();
+      .tableName(tableName)
+      .attributeDefinitions(attributeDefinition)
+      .keySchema(keySchemaElement)
+      .billingMode(BillingMode.PAY_PER_REQUEST)
+      .build();
 
     // createTable operation to create the table
     dynamoDbClient.createTable(createTableRequest);
 
     // create attribute values for the item
     var shipmentId = AttributeValue.builder().s("3317ac4f-1f9b-4bab-a974-4aa9876d5547")
-        .build();
+      .build();
     var recipientName = AttributeValue.builder().s("Harry Potter").build();
     // add other attributes as needed
 
     // create a map to hold the item attribute values
-    var item = new HashMap<String, AttributeValue>();
+    var item = new HashMap < String,
+      AttributeValue > ();
     item.put("shipmentId", shipmentId);
     item.put("recipient", AttributeValue.builder()
+      .m(Map.of(
+        "name", recipientName,
+        "address", AttributeValue.builder()
         .m(Map.of(
-            "name", recipientName,
-            "address", AttributeValue.builder()
-                .m(Map.of(
-                    "postalCode", AttributeValue.builder().s("LNDNGB").build(),
-                    "street", AttributeValue.builder().s("Privet Drive").build(),
-                    "number", AttributeValue.builder().s("4").build(),
-                    "city", AttributeValue.builder().s("Little Whinging").build(),
-                    "additionalInfo", AttributeValue.builder().s("").build()
-                ))
-                .build()
+          "postalCode", AttributeValue.builder().s("LNDNGB").build(),
+          "street", AttributeValue.builder().s("Privet Drive").build(),
+          "number", AttributeValue.builder().s("4").build(),
+          "city", AttributeValue.builder().s("Little Whinging").build(),
+          "additionalInfo", AttributeValue.builder().s("").build()
         ))
-        .build());
+        .build()
+      ))
+      .build());
 
     var senderName = AttributeValue.builder().s("Warehouse of Unicorns").build();
 
     item.put("sender", AttributeValue.builder()
+      .m(Map.of(
+        "name", senderName,
+        "address", AttributeValue.builder()
         .m(Map.of(
-            "name", senderName,
-            "address", AttributeValue.builder()
-                .m(Map.of(
-                    "postalCode", AttributeValue.builder().s("98653").build(),
-                    "street", AttributeValue.builder().s("47th Street").build(),
-                    "number", AttributeValue.builder().s("5").build(),
-                    "city", AttributeValue.builder().s("Townsville").build(),
-                    "additionalInfo", AttributeValue.builder().s("").build()
-                ))
-                .build()
+          "postalCode", AttributeValue.builder().s("98653").build(),
+          "street", AttributeValue.builder().s("47th Street").build(),
+          "number", AttributeValue.builder().s("5").build(),
+          "city", AttributeValue.builder().s("Townsville").build(),
+          "additionalInfo", AttributeValue.builder().s("").build()
         ))
-        .build());
+        .build()
+      ))
+      .build());
     item.put("weight", AttributeValue.builder().s("2.3").build());
 
     // create a PutItemRequest with the table name and item
     var putItemRequest = PutItemRequest.builder()
-        .tableName(tableName)
-        .item(item)
-        .build();
+      .tableName(tableName)
+      .item(item)
+      .build();
 
     // call the putItem operation to add the item to the table
     dynamoDbClient.putItem(putItemRequest);
@@ -408,28 +409,29 @@ public class LocalStackSetupConfigurations {
     var bucketName = BUCKET_NAME;
     // CreateBucketRequest with the bucket name
     var createBucketRequest = CreateBucketRequest.builder()
-        .bucket(bucketName)
-        .build();
+      .bucket(bucketName)
+      .build();
     // createBucket operation to create the bucket
     s3Client.createBucket(createBucketRequest);
 
     var putBucketPolicyRequest = PutBucketPolicyRequest.builder()
-        .bucket(bucketName)
-        .policy(
-            "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"AllowLambdaInvoke\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"*\"},\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::"
-                + BUCKET_NAME + "/*\"}]}")
-        .build();
+      .bucket(bucketName)
+      .policy(
+        "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"AllowLambdaInvoke\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"*\"},\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::" +
+        BUCKET_NAME + "/*\"}]}")
+      .build();
 
     s3Client.putBucketPolicy(putBucketPolicyRequest);
   }
 
-
   protected static ExecResult executeInContainer(String command) throws Exception {
 
-    final var execResult = localStack.execInContainer(formatCommand(command));
+    final
+    var execResult = localStack.execInContainer(formatCommand(command));
     // assertEquals(0, execResult.getExitCode());
 
-    final var logs = execResult.getStdout() + execResult.getStderr();
+    final
+    var logs = execResult.getStdout() + execResult.getStderr();
     logger.info(logs);
     logger.error(execResult.getExitCode() != 0 ? execResult + " - DOES NOT WORK" : "");
     return execResult;

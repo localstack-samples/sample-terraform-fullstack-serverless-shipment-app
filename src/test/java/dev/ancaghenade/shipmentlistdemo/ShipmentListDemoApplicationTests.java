@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ShipmentListDemoApplicationTests {
 
   @Test
-  void contextLoads() {
-  }
+  void contextLoads() {}
 
 }

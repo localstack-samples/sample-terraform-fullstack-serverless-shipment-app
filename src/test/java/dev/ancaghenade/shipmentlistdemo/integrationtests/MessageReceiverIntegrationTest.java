@@ -68,13 +68,13 @@ public class MessageReceiverIntegrationTest extends LocalStackSetupConfiguration
     var headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     // request body with the file resource and headers
-    MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
+    MultiValueMap < String, Object > requestBody = new LinkedMultiValueMap < > ();
     requestBody.add("file", resource);
-    HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(requestBody,
-        headers);
+    HttpEntity < MultiValueMap < String, Object >> requestEntity = new HttpEntity < > (requestBody,
+      headers);
 
-    ResponseEntity<String> responseEntity = restTemplate.exchange(BASE_URL + url,
-        HttpMethod.POST, requestEntity, String.class);
+    ResponseEntity < String > responseEntity = restTemplate.exchange(BASE_URL + url,
+      HttpMethod.POST, requestEntity, String.class);
 
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
@@ -88,8 +88,8 @@ public class MessageReceiverIntegrationTest extends LocalStackSetupConfiguration
 
     var sseUrl = "/push-endpoint";
 
-    ResponseEntity<String> sseEndpointResponse = restTemplate.getForEntity(BASE_URL + sseUrl,
-        String.class);
+    ResponseEntity < String > sseEndpointResponse = restTemplate.getForEntity(BASE_URL + sseUrl,
+      String.class);
     assertEquals(HttpStatus.OK, sseEndpointResponse.getStatusCode());
     assertNotNull(sseEndpointResponse.getBody());
     assertTrue(sseEndpointResponse.getBody().contains(shipmentId));
