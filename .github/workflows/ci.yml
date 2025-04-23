@@ -61,7 +61,9 @@ jobs:
       - name: Deploy using Terraform
         run: |
           cd terraform
-          bash run-tflocal.sh
+          tflocal init
+          tflocal plan
+          tflocal apply --auto-approve
 
       - name: Build frontend
         run: |
