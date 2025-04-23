@@ -76,7 +76,15 @@ jobs:
           npm install
           CI=false npm run build
 
+      - name: Stop LocalStack
+        run: |
+          localstack stop
+
       - name: Run Testcontainers tests
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_REGION: us-east-1
         run: |
           mvn test -Dtest=dev.ancaghenade.shipmentlistdemo.integrationtests.ShipmentServiceIntegrationTest      
 
