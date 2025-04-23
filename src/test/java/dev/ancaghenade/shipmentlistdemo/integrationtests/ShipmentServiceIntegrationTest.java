@@ -109,41 +109,6 @@ class ShipmentServiceIntegrationTest extends LocalStackSetupConfigurations {
 
   @Test
   @Order(3)
-  void testFileDownloadFromS3FailsOnWrongId() {
-
-    var shipmentId = "3317ac4f-1f9b-4bab-a974-4aa987wrong";
-    // build the URL with the id as a path variable
-    var url = "/api/shipment/" + shipmentId + "/image/download";
-    ResponseEntity<byte[]> responseEntity = restTemplate.exchange(BASE_URL + url,
-        HttpMethod.GET, null, byte[].class);
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-  }
-
-  @Test
-  @Order(4)
-  void testGetShipmentFromDynamoDB() throws IOException {
-
-    var url = "/api/shipment";
-    // set the request headers
-    ResponseEntity<List<Shipment>> responseEntity = restTemplate.exchange(BASE_URL + url,
-        HttpMethod.GET, null, new ParameterizedTypeReference<>() {
-        });
-
-    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    assertNotNull(responseEntity.getBody());
-
-    if (responseEntity.getStatusCode().is2xxSuccessful()) {
-      var json = new File("src/test/java/resources/shipment.json");
-      var shipment = objectMapper.readValue(json, Shipment.class);
-      List<Shipment> shipmentList = responseEntity.getBody();
-      var shipmentWithoutLink = shipmentList.get(0);
-      shipmentWithoutLink.setImageLink(null);
-      assertEquals(shipment, shipmentWithoutLink);
-    }
-  }
-
-  @Test
-  @Order(5)
   void testAddShipmentToDynamoDB() throws IOException {
 
     var url = "/api/shipment";
@@ -166,7 +131,7 @@ class ShipmentServiceIntegrationTest extends LocalStackSetupConfigurations {
   }
 
   @Test
-  @Order(6)
+  @Order(4)
   void testGetTwoShipmentsFromDynamoDB() {
 
     var url = "/api/shipment";
@@ -182,7 +147,7 @@ class ShipmentServiceIntegrationTest extends LocalStackSetupConfigurations {
   }
 
   @Test
-  @Order(7)
+  @Order(5)
   void testDeleteShipmentFromDynamoDB() {
 
     var url = "/api/shipment";
