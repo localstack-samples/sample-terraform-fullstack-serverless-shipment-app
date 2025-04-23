@@ -1,4 +1,4 @@
-name: Deploy with Terraform & run tests
+name: Deploy with Terraform
 
 on:
   push:
