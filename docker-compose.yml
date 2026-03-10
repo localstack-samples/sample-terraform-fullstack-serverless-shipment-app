@@ -3,7 +3,7 @@ version: "3.9"
 services:
   localstack:
     container_name: localstack
-    image: localstack/localstack:latest
+    image: localstack/localstack-pro:latest
     ports:
       - "127.0.0.1:4566:4566"            # LocalStack Gateway
       - "127.0.0.1:4510-4559:4510-4559"  # external services port range
@@ -12,7 +12,7 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock #unix socket to communicate with the docker daemon
       - LOCALSTACK_HOST=localstack # where services are available from other containers
       - ENFORCE_IAM=1 # enforce IAM policies
-#      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN:?}
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
