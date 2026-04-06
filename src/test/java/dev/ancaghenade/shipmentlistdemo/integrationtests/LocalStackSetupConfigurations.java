@@ -65,11 +65,14 @@ import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
 @Testcontainers
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 public class LocalStackSetupConfigurations {
+  private static final String LOCALSTACK_AUTH_TOKEN = System.getenv().getOrDefault(
+    "LOCALSTACK_AUTH_TOKEN", "");
 
   @Container
   protected static LocalStackContainer localStack =
     new LocalStackContainer(DockerImageName.parse("localstack/localstack:latest"))
     .withEnv("LOCALSTACK_HOST", "localhost.localstack.cloud")
+    .withEnv("LOCALSTACK_AUTH_TOKEN", LOCALSTACK_AUTH_TOKEN)
     .withEnv("LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT", "60")
     .withEnv("DEBUG", "1");
 
