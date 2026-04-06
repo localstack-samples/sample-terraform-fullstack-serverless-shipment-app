@@ -81,25 +81,18 @@ jobs:
         run: |
           localstack logs
 
-      - name: Ensure Docker is available for Testcontainers
+      - name: Stop LocalStack
         run: |
-          sudo systemctl start docker || true
-          docker version
-          docker info
+          localstack stop
 
       - name: Run Testcontainers tests
         env:
           AWS_ACCESS_KEY_ID: test
           AWS_SECRET_ACCESS_KEY: test
           AWS_REGION: us-east-1
-          DOCKER_HOST: unix:///var/run/docker.sock
+          LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
         run: |
           mvn test -Dtest=dev.ancaghenade.shipmentlistdemo.integrationtests.ShipmentServiceIntegrationTest
-
-      - name: Stop LocalStack
-        if: always()
-        run: |
-          localstack stop
 
       - name: Send a Slack notification
         if: failure() || github.event_name != 'pull_request'
