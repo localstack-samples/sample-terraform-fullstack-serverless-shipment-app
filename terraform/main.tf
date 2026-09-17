@@ -9,6 +9,11 @@ terraform {
 
 provider "aws" {
   region = local.aws_region
+  default_tags {
+    tags = {
+      aws-apn-id = "pc:9yq38ki5jw5mas7jhjthpgveo"
+    }
+  }
 }
 
 provider "random" {
